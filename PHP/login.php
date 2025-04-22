@@ -10,8 +10,10 @@ require_once 'validacao.php';
 require_once 'mostrar_erros.php';
 
 // Função auxiliar para redirecionamento
-function redirect($url, $error = null) {
-    if ($error) {
+function redirect($url, $error = null) 
+{
+    if ($error)
+    {
         $_SESSION['login_errors'] = (array)$error;
     }
     header("Location: $url");
@@ -23,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
     isset($_POST['botao'], $_POST['nome_login'], $_POST['log_pessoa'], $_POST['senha_log']) && 
     $_POST['botao'] === 'logar') 
 {
-    try {
+    try 
+    {
         // Limpa e valida os dados de entrada
         $nome = trim($_POST['nome_login']);
         $identificador = preg_replace('/[^0-9]/', '', $_POST['log_pessoa']);
@@ -48,10 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
         $comando->execute();
         $result = $comando->get_result();
 
-        if ($result->num_rows > 0) {
+        if ($result->num_rows > 0) 
+        {
             $usuario = $result->fetch_assoc();
             
-            if (password_verify($senha, $usuario['senha_cadastro'])) {
+            if (password_verify($senha, $usuario['senha_cadastro']))
+            {
                 $_SESSION['id_usuario'] = $usuario['id_cadastro'];
                 $_SESSION['nome_usuario'] = $usuario['nome_cadastro'];
                 $_SESSION['tipo_usuario'] = (strlen($identificador) == 11) ? 'CPF' : 'CNPJ';
@@ -60,17 +65,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
                 
                 // AJUSTE IMPORTANTE: Verifique o caminho correto para sua estrutura
                 redirect('../pag_principal.html');
-            } else {
+            }
+            else 
+            {
                 redirect('login.php', 'Senha incorreta.');
             }
-        } else {
+        }
+        else 
+        {
             redirect('login.php', 'Usuário não encontrado.');
         }
         
-    } catch (Exception $e) {
+    } 
+    catch (Exception $e)
+    {
         error_log('Erro no login: ' . $e->getMessage());
         redirect('login.php', 'Ocorreu um erro durante o login. Tente novamente.');
     }
-} else {
+}
+else 
+{
     redirect('login.php', 'Requisição inválida.');
 }
