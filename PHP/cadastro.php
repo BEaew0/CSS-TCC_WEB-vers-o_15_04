@@ -4,7 +4,8 @@ include 'conexao.php';
 require 'selects.php';
 include 'validacao.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+{
     // Receber e sanitizar os dados
     $nome = filter_input(INPUT_POST, 'nome_usuario', FILTER_SANITIZE_STRING);
     $CPF = filter_input(INPUT_POST, 'CPF_usuario', FILTER_SANITIZE_STRING);
@@ -21,15 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Realizar validação e capturar os erros
     $erros = $validador->validacao();
 
-    if (empty($erros)) {
+    if (empty($erros)) 
+    {
         // Se validação OK, preparar dados para inserção
         $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
         $dta_nasc_mysql = date('Y-m-d', strtotime($dta_nasc));
 
-        try {
+        try 
+        {
             $comando = inserir_cadastro($conn, $nome, $CPF, $CNPJ, $dta_nasc_mysql, $email, $senha_hash);
 
-            if($comando && $comando->execute()) {
+            if($comando && $comando->execute()) 
+            {
                 // Limpar dados sensíveis
                 unset($senha, $senha_conf, $senha_hash);
                 
@@ -52,21 +56,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       </body>
                       </html>";
                 exit();
-            } else {
+            } 
+            else
+            {
                 throw new Exception("Erro na execução do SQL");
             }
-        } catch (Exception $e) {
+        } 
+        catch (Exception $e) 
+        {
             error_log("Erro no cadastro: " . $e->getMessage());
             $erro = "Erro ao processar seu cadastro. Por favor, tente novamente.";
         }
-    } else {
+    } 
+    else 
+    {
         // Caso existam erros de validação
         $_SESSION['erros_cadastro'] = $erros;  // Armazena erros na sessão
         $erro = "Dados inválidos. Verifique os campos.";
     }
 
     // Se chegou aqui, houve algum erro
-    if (!headers_sent()) {
+    if (!headers_sent()) 
+    {
         header("Location: ../cadastro.html?erro=" . urlencode($erro));
     }
     exit();
